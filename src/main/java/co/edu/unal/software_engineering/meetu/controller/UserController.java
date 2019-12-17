@@ -3,6 +3,7 @@ package co.edu.unal.software_engineering.meetu.controller;
 import co.edu.unal.software_engineering.meetu.auth.configuration.WebSecurityConfiguration;
 import co.edu.unal.software_engineering.meetu.exception.ResourceNotFoundException;
 import co.edu.unal.software_engineering.meetu.model.Role;
+import co.edu.unal.software_engineering.meetu.model.Roles;
 import co.edu.unal.software_engineering.meetu.model.User;
 import co.edu.unal.software_engineering.meetu.pojo.RegisterUserPOJO;
 import co.edu.unal.software_engineering.meetu.repository.UserRepository;
@@ -38,7 +39,12 @@ public class UserController {
 
     @PostMapping( value = { "/user/register/{roleId}" } )
     public ResponseEntity register(@PathVariable Integer roleId, @RequestBody RegisterUserPOJO userPOJO ){
-        Role role = roleService.findById( roleId );
+        Roles roles = Roles.getInstance();
+        if(roles.getRoleList() == null){
+            roles.setRoleList(roleService.getAll());
+        }
+
+        Role role = roles.findRoleById(roleId);
         User existingUser = userService.findByEmail( userPOJO.getEmail( ) );
         boolean correcto = userService.isRightUser(userPOJO);
         if( role == null || existingUser != null || !correcto ){
