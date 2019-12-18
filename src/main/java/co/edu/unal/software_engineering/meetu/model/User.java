@@ -1,6 +1,11 @@
 package co.edu.unal.software_engineering.meetu.model;
 
+import co.edu.unal.software_engineering.meetu.log.LogModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.io.Serializable;
 import javax.persistence.*;
@@ -12,7 +17,7 @@ import java.sql.Blob;
  */
 @Entity
 @Table( name = "user", schema = "public" )
-public class User implements Serializable{
+public class User extends LogModel {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,7 +39,6 @@ public class User implements Serializable{
     @Column(name = "last_name")
     private String last_name;
 
-    @JsonIgnore
     @Column(name = "phone_number")
     private String phone_number;
 
@@ -48,6 +52,7 @@ public class User implements Serializable{
     @Column(name = "image")
     private Blob image;
 
+    @JsonIgnore
     @Column(name = "password")
     private String password;
 
@@ -58,6 +63,10 @@ public class User implements Serializable{
             inverseJoinColumns = { @JoinColumn( name = "role_id" ) } )
     private List<Role> roles;
 
+    //bi-directional many-to-many association to User
+    @JsonIgnore
+    @ManyToMany( mappedBy = "users" )
+    private List<Plan> plans;
     /**
      * Constructors
      */
@@ -130,6 +139,14 @@ public class User implements Serializable{
 
     public void setRoles( List<Role> roles ){
         this.roles = roles;
+    }
+
+    public List<Plan> getPlans() {
+        return plans;
+    }
+
+    public void setPlans(List<Plan> plans) {
+        this.plans = plans;
     }
 
     /**

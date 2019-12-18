@@ -1,15 +1,15 @@
 package co.edu.unal.software_engineering.meetu.model;
 
-import javax.persistence.*;
 import java.io.Serializable;
+import javax.persistence.*;
 
 /**
  * Private package class for the relation with M...M table
  */
 
 @Entity
-@Table( name = "user_role", schema = "public" )
-class UserRole implements Serializable {
+@Table( name = "user_plan", schema = "public" )
+class UserPlan implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -18,32 +18,32 @@ class UserRole implements Serializable {
      */
 
     @EmbeddedId
-    private UserRolePK userRolePK;
+    private UserPlanPK userPlanPK;
 
     /**
      * Constructors
      */
 
-    public UserRole( ){ }
+    public UserPlan( ){ }
 
     /**
      * Getters and Setters
      */
 
     User getUser( ){
-        return userRolePK.getUser( );
+        return userPlanPK.getUser( );
     }
 
     void setUser( User user ){
-        userRolePK.setUser( user );
+        userPlanPK.setUser( user );
     }
 
-    Role getRole( ){
-        return userRolePK.getRole( );
+    Plan getPlan( ){
+        return userPlanPK.getPlan( );
     }
 
-    void setRole( Role role ){
-        userRolePK.setRole( role );
+    void setPlan( Plan plan ){
+        userPlanPK.setPlan( plan );
     }
 
     /**
@@ -52,10 +52,10 @@ class UserRole implements Serializable {
 
     @Override
     public boolean equals( Object object ){
-        if( !(object instanceof UserRole) ) return false;
-        UserRole userRole = (UserRole) object;
-        return getUser( ).getId( ).equals( userRole.getUser( ).getId( ) ) &&
-                getRole( ).getId( ).equals( userRole.getRole( ).getId( ) );
+        if( !(object instanceof UserPlan) ) return false;
+        UserPlan userPlan = (UserPlan) object;
+        return getUser( ).getId( ).equals( userPlan.getUser( ).getId( ) ) &&
+                getPlan( ).getPlan_id( ).equals( userPlan.getPlan( ).getPlan_id( ) );
     }
 
     @Override
@@ -63,7 +63,7 @@ class UserRole implements Serializable {
         final int prime = 31;
         int hash = 17;
         hash = hash * prime + getUser( ).hashCode( );
-        hash = hash * prime + getRole( ).hashCode( );
+        hash = hash * prime + getPlan( ).hashCode( );
         return hash;
     }
 
@@ -72,7 +72,7 @@ class UserRole implements Serializable {
      */
 
     @Embeddable
-    private static class UserRolePK implements Serializable{
+    private static class UserPlanPK implements Serializable{
 
         private static final long serialVersionUID = 1L;
 
@@ -85,18 +85,18 @@ class UserRole implements Serializable {
         private User user;
 
         @ManyToOne
-        @JoinColumn( name = "role_id", insertable = false, updatable = false )
-        private Role role;
+        @JoinColumn( name = "plan_id", insertable = false, updatable = false )
+        private Plan plan;
 
         /**
          * Constructor
          */
 
-        public UserRolePK( ){ }
+        public UserPlanPK( ){ }
 
-        public UserRolePK( User user, Role role ){
+        public UserPlanPK( User user, Plan plan ){
             this.user = user;
-            this.role = role;
+            this.plan = plan;
         }
 
         /**
@@ -111,12 +111,12 @@ class UserRole implements Serializable {
             this.user = user;
         }
 
-        public Role getRole( ){
-            return role;
+        public Plan getPlan( ){
+            return plan;
         }
 
-        public void setRole( Role role ){
-            this.role = role;
+        public void setPlan( Plan plan ){
+            this.plan = plan;
         }
     }
 

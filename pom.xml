@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>co.edu.unal.software_engineering</groupId>
-	<artifactId>labs</artifactId>
+	<artifactId>meetu</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>labs</name>
-	<description>Labs for Software Engineering II course of National University of Colombia</description>
+	<name>meetu</name>
+	<description>meetu backend for Software Engineering II course of National University of Colombia</description>
 
 	<properties>
 		<java.version>1.8</java.version>
@@ -34,13 +34,29 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security.oauth</groupId>
+			<artifactId>spring-security-oauth2</artifactId>
+			<version>2.3.6.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.3.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jaxb</groupId>
+			<artifactId>jaxb-runtime</artifactId>
+			<version>2.3.2</version>
 		</dependency>
 
 	</dependencies>

@@ -1,0 +1,87 @@
+{
+	"info": {
+		"_postman_id": "f81f9d84-1663-4b82-a930-a9fbfbf89696",
+		"name": "meetu",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "localhost:8080/oauth/token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "username",
+							"value": "soft-eng-ii",
+							"type": "string"
+						},
+						{
+							"key": "password",
+							"value": "secret",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					},
+					{
+						"key": "username",
+						"value": "elcorreos",
+						"type": "text"
+					},
+					{
+						"key": "password",
+						"value": "12345678",
+						"type": "text"
+					},
+					{
+						"key": "grant_type",
+						"value": "password",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "elcorreos",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "12345678",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/oauth/token",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"oauth",
+						"token"
+					]
+				},
+				"description": "J"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
