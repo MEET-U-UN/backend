@@ -9,7 +9,7 @@ import javax.persistence.*;
 
 @Entity
 @Table( name = "user_plan", schema = "public" )
-class UserPlan implements Serializable{
+class UserPlan implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -85,7 +85,7 @@ class UserPlan implements Serializable{
         private User user;
 
         @ManyToOne
-        @JoinColumn( name = "id_plan", insertable = false, updatable = false )
+        @JoinColumn( name = "plan_id", insertable = false, updatable = false )
         private Plan plan;
 
         /**

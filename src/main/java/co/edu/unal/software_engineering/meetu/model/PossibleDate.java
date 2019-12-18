@@ -1,5 +1,6 @@
 package co.edu.unal.software_engineering.meetu.model;
 
+import co.edu.unal.software_engineering.meetu.log.LogModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.util.Date;
@@ -11,7 +12,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table( name = "date", schema = "public" )
-public class PossibleDate implements Serializable{
+public class PossibleDate extends LogModel {
 
     private static final long serialVersionUID = 1L;
 

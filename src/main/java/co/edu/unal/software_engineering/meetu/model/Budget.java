@@ -3,13 +3,14 @@ package co.edu.unal.software_engineering.meetu.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.*;
+import co.edu.unal.software_engineering.meetu.log.*;
 
 /**
  * The persistent class for the user database table.
  */
 @Entity
 @Table(name = "budget", schema = "public")
-public class Budget implements Serializable {
+public class Budget extends LogModel {
 
     private static final long serialVersionUID = 1L;
 

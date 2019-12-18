@@ -1,20 +1,25 @@
 package co.edu.unal.software_engineering.meetu.controller;
 
 import co.edu.unal.software_engineering.meetu.auth.configuration.WebSecurityConfiguration;
+import co.edu.unal.software_engineering.meetu.exception.ResourceNotFoundException;
 import co.edu.unal.software_engineering.meetu.model.Role;
+import co.edu.unal.software_engineering.meetu.model.Roles;
 import co.edu.unal.software_engineering.meetu.model.User;
 import co.edu.unal.software_engineering.meetu.pojo.RegisterUserPOJO;
+import co.edu.unal.software_engineering.meetu.repository.UserRepository;
 import co.edu.unal.software_engineering.meetu.service.RoleService;
 import co.edu.unal.software_engineering.meetu.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.util.Collections;
 
 
 @CrossOrigin
@@ -22,10 +27,11 @@ import java.util.Collections;
 public class UserController {
 
     private final UserService userService;
-
     private final RoleService roleService;
-
     private WebSecurityConfiguration webSecurityConfiguration;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public UserController(UserService userService, RoleService roleService, WebSecurityConfiguration webSecurityConfiguration){
         this.userService = userService;
@@ -33,19 +39,20 @@ public class UserController {
         this.webSecurityConfiguration = webSecurityConfiguration;
     }
 
-/*
-    @Bean
-    public PasswordEncoder passwordEncoder( ){
-        return new BCryptPasswordEncoder( );
-    }
-*/
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    @PostMapping( value = { "/registro/{roleId}" } )
+    @PostMapping( value = { "/user/register/{roleId}" } )
     public ResponseEntity register(@PathVariable Integer roleId, @RequestBody RegisterUserPOJO userPOJO ){
-        Role role = roleService.findById( roleId );
+        Roles roles = Roles.getInstance();
+        if(roles.getRoleList() == null){
+            roles.setRoleList(roleService.getAll());
+        }
+
+        Role role = roles.findRoleById(roleId);
         User existingUser = userService.findByEmail( userPOJO.getEmail( ) );
         boolean correcto = userService.isRightUser(userPOJO);
         if( role == null || existingUser != null || !correcto ){
+
             return new ResponseEntity( HttpStatus.BAD_REQUEST );
         }
         User newUser = new User( );
@@ -59,36 +66,62 @@ public class UserController {
         newUser.setRoles( Collections.singletonList( role ) );
 
         userService.save( newUser );
-        return new ResponseEntity( HttpStatus.CREATED );
-    }
-/*
-    @PostMapping( value = { "/registro/nuevo-rol/{roleId}" } )
-    public ResponseEntity registerRoleToUser(@PathVariable Integer roleId, @RequestBody LoginUserPOJO userPOJO ){
-        Role role = roleService.findById( roleId );
-        User existingUser = userService.findByEmail( userPOJO.getEmail( ) );
-        if( role == null || existingUser == null || existingUser.getRoles( ).contains( role ) ){
-            return new ResponseEntity( HttpStatus.BAD_REQUEST );
-        }else if( !passwordEncoder.matches( userPOJO.getPassword( ), existingUser.getPassword( ) ) ){
-            return new ResponseEntity( HttpStatus.UNAUTHORIZED );
-        }
-        existingUser.addRole( role );
-        userService.save( existingUser );
+
+        logger.info("New user " + userPOJO.getEmail() + " registered in role " + roleId);
         return new ResponseEntity( HttpStatus.CREATED );
     }
 
-    @PostMapping( value = { "/login" } )
-    public ResponseEntity login(@RequestBody LoginUserPOJO userPOJO ){
 
-        User existingUser = userService.findByEmail( userPOJO.getEmail( ) );
+    @GetMapping( value =  {"user/"}) // Get user
+    public User getUserByEmail() {
+        String email = SecurityContextHolder.getContext( ).getAuthentication( ).getName();
+        User existingUser = userService.findByEmail( email );
 
-        if (existingUser != null){
-            boolean esValido = passwordEncoder.matches(userPOJO.getPassword(), existingUser.getPassword());
-            if(esValido){
-                return new ResponseEntity(HttpStatus.ACCEPTED);
-            }
-        }
-        return new ResponseEntity(HttpStatus.UNAUTHORIZED);
+        logger.info("User returned by email successfully ");
+        return userService.findByEmail(email);
     }
 
- */
+
+    @PutMapping( value = {"user/"}) //Update user
+    public ResponseEntity updateUser( @RequestBody RegisterUserPOJO userPOJO){
+
+        PasswordEncoder passwordEncoder = webSecurityConfiguration.passwordEncoder();
+
+        String email = SecurityContextHolder.getContext( ).getAuthentication( ).getName();
+        User temp = userService.findByEmail( email );
+        if(userPOJO.getEmail() != null){
+            temp.setEmail(userPOJO.getEmail().toLowerCase());
+        }
+        if(userPOJO.getPhone_number() != null){
+            temp.setPhone_number(userPOJO.getPhone_number());
+        }
+        if(userPOJO.getLast_name() != null){
+            temp.setLast_name(userPOJO.getLast_name().toLowerCase());
+        }
+        if(userPOJO.getCity() != null){
+            temp.setCity(userPOJO.getCity().toLowerCase());
+        }
+        if(userPOJO.getPassword() != null){
+            temp.setPassword(passwordEncoder.encode(userPOJO.getPassword()));
+        }
+        if(userPOJO.getUsername() != null){
+            temp.setUsername(userPOJO.getUsername().toLowerCase());
+        }
+
+        userService.save(temp);
+
+        logger.info("user " + email + " updated successfully ");
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = {"user/"})   //delete user
+    public ResponseEntity<?> deleteUser() {
+        String email = SecurityContextHolder.getContext( ).getAuthentication( ).getName();
+        userService.delete(userService.findByEmail(email));
+
+        logger.info("user " + email + " deleted successfully ");
+        //logger.info("user deleted successfully ");
+        return new ResponseEntity( HttpStatus.OK );
+    }
+
 }

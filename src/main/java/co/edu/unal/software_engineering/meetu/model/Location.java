@@ -1,5 +1,6 @@
 package co.edu.unal.software_engineering.meetu.model;
 
+import co.edu.unal.software_engineering.meetu.log.LogModel;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.*;
@@ -9,7 +10,7 @@ import javax.persistence.*;
  */
 @Entity
 @Table(name = "location", schema = "public")
-public class Location implements Serializable {
+public class Location extends LogModel {
 
     private static final long serialVersionUID = 1L;
 

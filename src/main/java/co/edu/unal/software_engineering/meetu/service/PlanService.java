@@ -26,11 +26,13 @@ public class PlanService {
         planRepository.save( plan );
     }
 
-    /*
-    public Plan findByPlanId(Integer planId) {
-        return planRepository.findByPlanId(planId);
+    public void delete (Plan plan) {
+        planRepository.delete(plan);
     }
-     */
+
+    public boolean existsById(Integer id){
+        return planRepository.existsById(id);
+    }
 
     public boolean isRightPlan(CreatePlanPOJO plan ){
         boolean correctness = plan.getDescription() != null && plan.getTitle() != null;
