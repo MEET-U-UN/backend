@@ -6,6 +6,8 @@ import co.edu.unal.software_engineering.meetu.repository.PlanRepository;
 //import co.edu.unal.software_engineering.meetu.service.BudgetService;
 import co.edu.unal.software_engineering.meetu.service.PlanService;
 import co.edu.unal.software_engineering.meetu.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +22,8 @@ import java.util.List;
 @CrossOrigin
 @RestController
 public class PlanController {
+
+    private final Logger logger = LoggerFactory.getLogger(PlanController.class);
 
     private final PlanService planService;
     private final UserService userService;
@@ -103,6 +107,7 @@ public class PlanController {
 
         planService.save(newPlan);
 
+        logger.info("user " + email + " successfully created a plan");
         return new ResponseEntity( HttpStatus.CREATED );
     }
 
@@ -112,6 +117,8 @@ public class PlanController {
         String email = SecurityContextHolder.getContext( ).getAuthentication( ).getName();
         User userTemp = userService.findByEmail( email );
         List<Plan> temp = userTemp.getPlans();
+
+        logger.info("user " + email + " successfully got its plans");
         return temp;
     }
 
@@ -122,6 +129,7 @@ public class PlanController {
         User existingUser = userService.findByEmail( email );
 
         if (!planService.existsById(planId)){
+            logger.info("user " + email + " could not update plan " + planId + "successfully ");
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }else{
             Plan erase = planService.findById(planId);
@@ -188,6 +196,7 @@ public class PlanController {
 
             planService.save(temp);
 
+            logger.info("user " + email + " updated plan " + planId + "successfully ");
             return new ResponseEntity(HttpStatus.OK);
         }
     }
@@ -195,9 +204,11 @@ public class PlanController {
 
     @DeleteMapping(value = {"/plan/{planId}"})   //delete plan
     public ResponseEntity<?> deletePlan(@PathVariable Integer planId) {
+        String email = SecurityContextHolder.getContext( ).getAuthentication( ).getName();
         return planRepository.findById(planId)
                 .map(plan -> {
                     planRepository.delete(plan);
+                    logger.info("user " + email + " deleted plan " + planId + "successfully ");
                     return ResponseEntity.ok().build();
                 }).orElseThrow(() -> new ResourceNotFoundException("Plan not found with id " + planId));
     }

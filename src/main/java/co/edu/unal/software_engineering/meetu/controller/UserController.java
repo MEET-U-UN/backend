@@ -15,6 +15,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Collections;
 
 
@@ -35,6 +38,7 @@ public class UserController {
         this.webSecurityConfiguration = webSecurityConfiguration;
     }
 
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping( value = { "/user/register/{roleId}" } )
     public ResponseEntity register(@PathVariable Integer roleId, @RequestBody RegisterUserPOJO userPOJO ){
@@ -42,6 +46,7 @@ public class UserController {
         User existingUser = userService.findByEmail( userPOJO.getEmail( ) );
         boolean correcto = userService.isRightUser(userPOJO);
         if( role == null || existingUser != null || !correcto ){
+
             return new ResponseEntity( HttpStatus.BAD_REQUEST );
         }
         User newUser = new User( );
@@ -55,6 +60,8 @@ public class UserController {
         newUser.setRoles( Collections.singletonList( role ) );
 
         userService.save( newUser );
+
+        logger.info("New user " + userPOJO.getEmail() + " registered in role " + roleId);
         return new ResponseEntity( HttpStatus.CREATED );
     }
 
@@ -63,6 +70,8 @@ public class UserController {
     public User getUserByEmail() {
         String email = SecurityContextHolder.getContext( ).getAuthentication( ).getName();
         User existingUser = userService.findByEmail( email );
+
+        logger.info("User returned by email successfully ");
         return userService.findByEmail(email);
     }
 
@@ -94,13 +103,18 @@ public class UserController {
         }
 
         userService.save(temp);
+
+        logger.info("user " + email + " updated successfully ");
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @DeleteMapping(value = {"user/"})   //delete plan
-    public ResponseEntity<?> deletePlan() {
+    @DeleteMapping(value = {"user/"})   //delete user
+    public ResponseEntity<?> deleteUser() {
         String email = SecurityContextHolder.getContext( ).getAuthentication( ).getName();
         userService.delete(userService.findByEmail(email));
+
+        logger.info("user " + email + " deleted successfully ");
+        //logger.info("user deleted successfully ");
         return new ResponseEntity( HttpStatus.OK );
     }
 
